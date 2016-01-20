@@ -1,0 +1,130 @@
+<html>
+<canvas id="backCanvas" width="800" height="600" style=" padding:0px; vertical-align: bottom; display:block;">
+</canvas>
+<script>
+	const PADDLE_HEIGHT = 350;
+	const PADDLE_WIDTH = 5;
+	const THICKNESS = 10;
+	var canvas;
+	var canvasContext;
+	var ballX = 50;
+	var ballY = 50;
+	var ballSpeedX = 10;
+	var ballSpeedY = 4;
+	var paddleLeftY = 250;
+	var paddleRightY =  250;
+	var fps = 40;
+	var bounceCount =0;
+	
+	function getMovement(evt){
+		var rect = canvas.getBoundingClientRect();
+		var root = document.documentElement;
+		var mouseX= evt.clientX - rect.left - root.scrollLeft;
+		var mouseY = evt.clientY - rect.top - root.scrollTop;
+		return {
+			x:mouseX,
+			y:mouseY
+		}
+	}
+
+	window.onload = function() {
+		GamingYOLO();
+	}
+	
+	function GamingYOLO(){
+			canvas = document.getElementById('backCanvas');
+		canvasContext = canvas.getContext('2d');
+		
+		setInterval(function() {
+			moveElements();
+			drawGameElements();
+		}, 1000 / fps);
+		
+		canvas.addEventListener('mousemove', function (evt) {
+			var mousePos = getMovement(evt);
+			if (mousePos.x > canvas.width/2){
+				paddleRightY = mousePos.y - (PADDLE_HEIGHT/2);
+			}
+			
+			if (mousePos.x < canvas.width/2){
+				paddleLeftY = mousePos.y - (PADDLE_HEIGHT/2);
+			}
+		})
+		
+	}
+
+	function moveElements() {
+		console.log(fps);
+		ballX = ballX + ballSpeedX;
+		ballY = ballY + ballSpeedY;
+		
+		if (ballX < 0){
+			if ((ballY > paddleLeftY) && (ballY < paddleLeftY+PADDLE_HEIGHT)){
+				ballSpeedX = -ballSpeedX;	
+				var reflectionEffect = ballY -(paddleLeftY+PADDLE_HEIGHT/2);
+				ballSpeedY = reflectionEffect * 0.05;
+				bounceCount++;
+			}else{
+				reset();
+				return;
+			}
+		}
+		
+		if (ballX > canvas.width) {
+			if ((ballY > paddleRightY) && (ballY < paddleRightY +PADDLE_HEIGHT)){
+				ballSpeedX = -ballSpeedX;		
+				var reflectionEffect = ballY -(paddleRightY+PADDLE_HEIGHT/2);
+				ballSpeedY = reflectionEffect * 0.05;
+				bounceCount++;
+			}else{
+				reset();
+				return;
+			}
+		}
+		
+		if (ballY > canvas.height)
+			ballSpeedY = -ballSpeedY		
+		
+		if (ballY < 0)
+			ballSpeedY = -ballSpeedY;
+	}
+
+	function drawGameElements() {
+		canvas.width = document.documentElement.clientWidth - 20;
+		canvas.height = document.documentElement.clientHeight - 20;
+		colorRect(0,0,canvas.width, canvas.height, 'white');
+		colorRect(0, paddleLeftY, PADDLE_WIDTH,  getNotStressedLevel(), 'green');
+		colorRect(canvas.width - PADDLE_WIDTH, paddleRightY, PADDLE_WIDTH,  getNotStressedLevel(), 'green');
+		paintBall(ballX, ballY,10,'green');
+		canvasContext.fillStyle = 'green';
+		document.title = "Not stressed. Bounces: " + bounceCount;
+	}
+	
+	function getNotStressedLevel(){
+		if (bounceCount == 0)
+			return PADDLE_HEIGHT;
+		return PADDLE_HEIGHT - (bounceCount * 20); 
+	}
+
+	function colorRect(leftX, topY, width, height, drawColor) {
+		canvasContext.fillStyle = drawColor;
+		canvasContext.fillRect(leftX, topY, width, height);
+	}
+	
+	function paintBall(centerX, centerY, radius, drawColor){
+		canvasContext.fillStyle = drawColor;
+		canvasContext.beginPath();
+		canvasContext.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
+		canvasContext.fill();
+	}
+	
+	function reset() {
+		bounceCount = 0;
+		canvasContext.clearRect(0,0,canvas.width, canvas.height);
+		ballSpeedX = -ballSpeedX;
+		ballX = canvas.width /2;
+		ballY = canvas.height /2;
+	}
+</script>
+
+</html>
