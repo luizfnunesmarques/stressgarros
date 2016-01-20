@@ -1,2 +1,6 @@
-# stressgarros
-Pure HTML5 and ECMAScript 6 pong game.
+# Stress Garros
+To relax: play until no paddle is visible.
+
+feel free to do any contributions!
+
+
