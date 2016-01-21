@@ -85,10 +85,10 @@
       }
     }
     
-    if (ballY > canvas.height)
+    if (ballY > canvas.height - 10)
       ballSpeedY = -ballSpeedY;   
     
-    if (ballY <= 0)
+    if (ballY <= 10)
       ballSpeedY = -ballSpeedY;
   }
 
@@ -97,23 +97,9 @@
     canvas.height = document.documentElement.clientHeight - 20;
     colorRect(0, paddleLeftY, PADDLE_WIDTH,  getNotStressedLevel(), 'green');
     colorRect(canvas.width - PADDLE_WIDTH, paddleRightY, PADDLE_WIDTH,  getNotStressedLevel(), 'green');
-    paintBall(getXBallPosition(), getYBallPosition(), 10, 'green');
+    paintBall(ballX, ballY, 10, 'green');
     canvasContext.fillStyle = 'green';
     document.title = "Not stressed. Bounces: " + bounceCount;
-  }
-  
-  function getXBallPosition(){
-    if ((canvas.height/2) < ballX)
-      return ballX - 10;
-    else
-      return ballX + 10;
-  }
-  
-  function getYBallPosition(){
-    if ((canvas.width/2) < ballY)
-      return ballY - 15;
-    else
-      return ballY + 15;
   }
   
   function getNotStressedLevel(){
